@@ -1,3 +1,4 @@
+import javax.swing.tree.TreeNode;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,9 +16,22 @@ public class Main {
         //int[] input = new int[]{7,1,5,3,6,4};
         //int output = maxProfit(input);
 
-        String input = "babad";
-        String output = longestPalindrome(input);
-        System.out.println(output);
+        //String input = "babad";
+        //String output = longestPalindrome(input);
+
+//        StringBuffer sb = new StringBuffer();
+//        sb.append("This is an");
+//        var output = expandBySpace(sb, 2, 8, 16);
+//        System.out.println(output.toString());
+
+        String[] input = new String[]{"Science","is","what","we","understand","well","enough","to","explain","to","a","computer.","Art","is","everything","else","we","do"};
+        List<String> output = fullJustify(input, 16);
+
+        for(String s: output) {
+            System.out.println(s);
+        }
+
+
     }
 
     public static List<List<String>> groupAnagrams(String[] strs) {
@@ -244,9 +258,6 @@ public class Main {
         return maxprofit;
     }
 
-    public static String longestPalindrome(String s) {
-
-    }
 
     public static int[] dailyTemperatures(int[] temperatures) {
         int[] result = new int[temperatures.length];
@@ -272,6 +283,170 @@ public class Main {
         return true;
     }
 
+    public static List<String> fullJustify(String[] words, int maxWidth) {
+        List<String> result = new ArrayList<String>();
+        int lineSpaceCount = 0;
+        int lineCharCount = 0;
+        StringBuffer sb = new StringBuffer();
+
+        for(String w: words) {
+            if (sb.length() + w.length() > maxWidth+1) {
+                StringBuffer expanded = expandBySpace(sb.delete(sb.length()-1, sb.length()), lineSpaceCount-1, lineCharCount, maxWidth);
+                result.add(expanded.toString());
+                sb = new StringBuffer();
+                sb.append(w);
+                sb.append(' ');
+
+                lineCharCount = w.length();
+                lineSpaceCount = 1;
+
+            } else if (sb.length() + w.length() == maxWidth) {
+                sb.append(w);
+                result.add(sb.toString());
+                sb = new StringBuffer();
+                lineCharCount = 0;
+                lineSpaceCount = 0;
+            } else {
+                sb.append(w);
+                sb.append(' ');
+
+                lineCharCount = lineCharCount + w.length();
+                lineSpaceCount = lineSpaceCount + 1;
+            }
+        }
+        if (!sb.isEmpty()) {
+            while(sb.length() != maxWidth){
+                sb.append(' ');
+            }
+            result.add(sb.toString());
+        }
 
 
+        return result;
+    }
+
+    public static StringBuffer expandBySpace(StringBuffer input, int spaceCount, int charCount, int maxWidth) {
+        StringBuffer sb = new StringBuffer();
+        int remainingToFill = maxWidth - charCount;
+        if (spaceCount == 0) {
+            while(input.length() != maxWidth){
+                input.append(' ');
+            }
+
+            return input;
+        }
+
+        int toExpand = remainingToFill / spaceCount;
+
+        for(int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) == ' ') {
+                for(int j = 0; j < toExpand; j++) {
+                    sb.append(' ');
+                }
+            } else {
+                sb.append(input.charAt(i));
+            }
+        }
+
+        if(sb.length() != maxWidth) {
+            for(int i = 1; i < sb.length(); i++) {
+                if (sb.charAt(i-1) == ' ' && sb.charAt(i) != ' ') {
+                    sb.insert(i, ' ');
+                    if (sb.length() == maxWidth) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return sb;
+    }
+
+
+    public static int minMeetingRooms(int[][] intervals) {
+        if (intervals.length == 0) {
+            return 0;
+        }
+
+        PriorityQueue<Integer> allocated = new PriorityQueue<>(intervals.length);
+
+        Arrays.sort(intervals, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o1[0] - o2[0];
+            }
+        });
+
+        allocated.add(intervals[0][1]);
+
+        for(int i = 1; i < intervals.length; i++) {
+            if (intervals[i][0] >= allocated.peek()) {
+                allocated.poll();
+            }
+            allocated.add(intervals[i][1]);
+        }
+
+        return allocated.size();
+    }
+
+
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        inorderTraversalResult(root, result);
+        return result;
+    }
+
+    public void inorderTraversalResult(TreeNode node, List<Integer> result) {
+        if (node == null) {
+            return;
+        }
+        if (node.left != null) {
+            inorderTraversalResult(node.left, result);
+            //result.add(node.left.val);
+        }
+        result.add(node.val);
+        if (node.right != null) {
+            inorderTraversalResult(node.right, result);
+            //result.add(node.right.val);
+        }
+    }
+
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> toReturn = new ArrayList<>();
+        HashMap<Integer, List<Integer>> map = new HashMap<>();
+        HashMap<Integer, List<Integer>> result = levelOrderWithMap(root, 0, map);
+
+        var keySet = map.keySet();
+        var sorted = keySet.stream().sorted().toList();
+        for(int k : sorted) {
+            toReturn.add(result.get(k));
+        }
+
+        return toReturn;
+    }
+
+    public HashMap<Integer, List<Integer>> levelOrderWithMap(TreeNode root, int level, HashMap<Integer, List<Integer>> map) {
+        if (root == null) {
+            return map;
+        }
+        var current = map.computeIfAbsent(level, k -> new ArrayList<>());
+        current.add(root.val);
+
+        levelOrderWithMap(root.left, level + 1, map);
+        levelOrderWithMap(root.right, level + 1, map);
+        return map;
+    }
+
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+        TreeNode() {}
+        TreeNode(int val) { this.val = val; }
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
 }
