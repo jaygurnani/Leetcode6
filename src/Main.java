@@ -24,13 +24,16 @@ public class Main {
 //        var output = expandBySpace(sb, 2, 8, 16);
 //        System.out.println(output.toString());
 
-        String[] input = new String[]{"Science","is","what","we","understand","well","enough","to","explain","to","a","computer.","Art","is","everything","else","we","do"};
-        List<String> output = fullJustify(input, 16);
+//        String[] input = new String[]{"Science","is","what","we","understand","well","enough","to","explain","to","a","computer.","Art","is","everything","else","we","do"};
+//        List<String> output = fullJustify(input, 16);
+//
+//        for(String s: output) {
+//            System.out.println(s);
+//        }
 
-        for(String s: output) {
-            System.out.println(s);
-        }
-
+        int[] input = new int[] {3,1,4,3,2,2,4};
+        long output = countGood(input, 2);
+        System.out.println(output);
 
     }
 
@@ -435,6 +438,34 @@ public class Main {
         levelOrderWithMap(root.left, level + 1, map);
         levelOrderWithMap(root.right, level + 1, map);
         return map;
+    }
+
+    public static long countGood(int[] nums, int k) {
+        long result = 0;
+        HashMap<Integer, Integer> freq = new HashMap<>();
+        int left = 0;
+        long pairCount = 0;
+        for (int right = 0; right < nums.length; right++) {
+            int currentFreq = freq.getOrDefault(nums[right], 0);
+            // If we get a one here, the pair count becomes 1
+            pairCount = pairCount + currentFreq;
+            currentFreq = currentFreq+1;
+            freq.put(nums[right], currentFreq);
+
+            while (pairCount >= k) {
+                // We shortcut a quick way to calculate all the sub-arrays
+                // Anything more added will just add the sub-array count
+                result = result + (nums.length - right);
+                int leftNum = nums[left];
+                var leftFreq = freq.get(leftNum);
+                leftFreq--;
+                freq.put(leftNum, leftFreq);
+                pairCount = pairCount - leftFreq;
+                left++;
+            }
+        }
+
+        return result;
     }
 
     public class TreeNode {
