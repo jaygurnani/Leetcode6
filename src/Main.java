@@ -31,8 +31,13 @@ public class Main {
 //            System.out.println(s);
 //        }
 
-        int[] input = new int[] {3,1,4,3,2,2,4};
-        long output = countGood(input, 2);
+//        int[] input = new int[] {3,1,4,3,2,2,4};
+//        long output = countGood(input, 2);
+
+//        int[][] input = new int[][] {{11, 9}, {9, 4},{1,5}, {4, 1}, };
+//        String output = printPathWay(input);
+
+        String output = removeKdigits("33526221184202197273", 19);
         System.out.println(output);
 
     }
@@ -467,6 +472,118 @@ public class Main {
 
         return result;
     }
+
+    public static String printPathWay(int[][] paths) {
+        StringBuffer sb = new StringBuffer();
+        // First we need to find the starting point
+        Set<Integer> set = new HashSet<>();
+        // Then we need to keep a map of source destinations
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        // Add all the sources
+        for(int i = 0; i < paths.length; i++) {
+            set.add(paths[i][0]);
+            map.put(paths[i][0], paths[i][1]);
+        }
+        // Remove all destinations
+        for(int i = 0; i < paths.length; i++) {
+            set.remove(paths[i][1]);
+        }
+
+        List<Integer> list = new ArrayList<Integer>(set);
+        int next = list.getFirst();
+
+        while (map.containsKey(next)) {
+            next = map.get(next);
+            sb.append(next);
+            sb.append("->");
+        }
+
+
+        return sb.substring(0, sb.length()-2);
+    }
+
+    public String destCity(List<List<String>> paths) {
+        List<String> list = new ArrayList<>();
+
+        for(int i = 0; i < paths.size(); i++) {
+            list.add(paths.get(i).get(1));
+        }
+
+        for(int j = 0; j < paths.size(); j++) {
+            list.remove(paths.get(j).get(0));
+        }
+        return list.getFirst();
+
+    }
+
+    // This approach won't work for very long string since we don't have enough space for int / long
+    // See solution bottom from leetcode on how to solve this using a stack taken from
+    // - https://leetcode.com/problems/remove-k-digits/editorial/
+    public static String removeKdigits2(String num, int k) {
+        long min = Long.MAX_VALUE;
+        StringBuffer sb = new StringBuffer(num);
+
+        if (num.length() == k) {
+            return "0";
+        }
+
+        for(int i = 0; i < k; i++) {
+            for(int j = 0; j < num.length(); j++) {
+                char toAddBack = num.charAt(j);
+                sb.deleteCharAt(j);
+                String current = sb.toString();
+                if (current.isEmpty()) {
+                    return "0";
+                }
+
+                long currentValue = Long.parseLong(current);
+                if (currentValue < min) {
+                    min = currentValue;
+                }
+                sb.insert(j, toAddBack);
+            }
+            num = Long.toString(min);
+            sb = new StringBuffer(num);
+        }
+
+        return Long.toString(min);
+    }
+
+    public String removeKdigits(String num, int k) {
+        Stack<Character> stack = new Stack<>();
+
+        for (char digit : num.toCharArray()) {
+            while (!stack.isEmpty() && k > 0 && stack.peek() > digit) {
+                stack.pop();
+                k--;
+            }
+            stack.push(digit);
+        }
+
+        // Remove remaining k digits from the end of the stack
+        while (k > 0 && !stack.isEmpty()) {
+            stack.pop();
+            k--;
+        }
+
+
+        // Construct the resulting string from the stack
+        StringBuilder sb = new StringBuilder();
+        while (!stack.isEmpty()) {
+            sb.append(stack.pop());
+        }
+        sb.reverse(); // Reverse to get the correct order
+
+        // Remove leading zeros
+        while (sb.length() > 0 && sb.charAt(0) == '0') {
+            sb.deleteCharAt(0);
+        }
+
+        // Handle edge case where result might be empty
+        return sb.length() > 0 ? sb.toString() : "0";
+    }
+
 
     public class TreeNode {
         int val;
