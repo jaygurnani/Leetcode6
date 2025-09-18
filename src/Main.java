@@ -37,7 +37,9 @@ public class Main {
 //        int[][] input = new int[][] {{11, 9}, {9, 4},{1,5}, {4, 1}, };
 //        String output = printPathWay(input);
 
-        String output = removeKdigits("33526221184202197273", 19);
+        //String output = removeKdigits("33526221184202197273", 19);
+        int[] input = new int[]{99,99};
+        String output = String.valueOf(containsNearbyDuplicate(input, 2));
         System.out.println(output);
 
     }
@@ -550,7 +552,7 @@ public class Main {
         return Long.toString(min);
     }
 
-    public String removeKdigits(String num, int k) {
+    public static String removeKdigits(String num, int k) {
         Stack<Character> stack = new Stack<>();
 
         for (char digit : num.toCharArray()) {
@@ -584,6 +586,38 @@ public class Main {
         return sb.length() > 0 ? sb.toString() : "0";
     }
 
+    public static int[] twoSum(int[] numbers, int target) {
+        int[] result = new int[2];
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        for(int i = 0; i < numbers.length; i++) {
+            map.put(numbers[i], i);
+        }
+        for(int j = 0; j < numbers.length; j++) {
+            if (map.containsKey(target - numbers[j])) {
+                result[0] = j+1;
+                result[1] = map.get(target - numbers[j]) +1;;
+                return result;
+            }
+
+        }
+
+        return result;
+    }
+
+    public static boolean containsNearbyDuplicate(int[] nums, int k) {
+        HashSet<Integer> set = new HashSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (set.contains(nums[i])) {
+                return true;
+            }
+            set.add(nums[i]);
+            if (set.size() > k) {
+                set.remove(nums[i-k]);
+            }
+        }
+        return false;
+    }
 
     public class TreeNode {
         int val;
