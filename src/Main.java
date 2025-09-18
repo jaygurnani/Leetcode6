@@ -602,7 +602,7 @@ public class Main {
 
         }
 
-        return result;
+        return result; 
     }
 
     public static boolean containsNearbyDuplicate(int[] nums, int k) {
