@@ -38,8 +38,11 @@ public class Main {
 //        String output = printPathWay(input);
 
         //String output = removeKdigits("33526221184202197273", 19);
-        int[] input = new int[]{99,99};
-        String output = String.valueOf(containsNearbyDuplicate(input, 2));
+        //int[] input = new int[]{99,99};
+        //String output = String.valueOf(containsNearbyDuplicate(input, 2));
+        //int[] nums = new int[]{0,0,1,1,0,0,1,1,1,0,1,1,0,0,0,1,1,1,1};
+        //int output = longestOnes(nums, 3);
+        int output = lengthOfLongestSubstringTwoDistinct("ccaabbb");
         System.out.println(output);
 
     }
@@ -602,7 +605,7 @@ public class Main {
 
         }
 
-        return result; 
+        return result;
     }
 
     public static boolean containsNearbyDuplicate(int[] nums, int k) {
@@ -617,6 +620,61 @@ public class Main {
             }
         }
         return false;
+    }
+
+    public int maxFrequency(int[] nums, int k) {
+        return 0;
+    }
+
+    public static int longestOnes(int[] nums, int k) {
+        int left = 0;
+        int right = 0;
+
+        while (right < nums.length) {
+            if (nums[right] == 0) {
+                k = k-1;
+            }
+            if (k < 0) {
+                if (nums[left] == 0) {
+                    k = k+1;
+                }
+                left++;
+            }
+            right++;
+        }
+        return right-left;
+
+    }
+
+    public static int lengthOfLongestSubstringTwoDistinct(String s) {
+        char[] input = s.toCharArray();
+        int left = 0;
+        int right = 0;
+        int max = Integer.MIN_VALUE;
+        HashMap<Character, Integer> map = new HashMap<>();
+
+        while(right < input.length) {
+            // If we have seen this already, just continue
+            if (map.containsKey(input[right])) {
+                map.put(input[right], map.get(input[right]) + 1);
+                right++;
+            } else {
+                // This is a new character
+                while(map.size() >= 2) {
+                    map.put(input[left], map.get(input[left]) - 1);
+                    if (map.get(input[left]) == 0) {
+                        map.remove(input[left]);
+                    }
+                    left++;
+                }
+                map.put(input[right], 1);
+                right++;
+
+            }
+            max = Math.max(max, right-left);
+        }
+
+        return max;
     }
 
     public class TreeNode {
