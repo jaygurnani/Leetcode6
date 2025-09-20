@@ -42,7 +42,9 @@ public class Main {
         //String output = String.valueOf(containsNearbyDuplicate(input, 2));
         //int[] nums = new int[]{0,0,1,1,0,0,1,1,1,0,1,1,0,0,0,1,1,1,1};
         //int output = longestOnes(nums, 3);
-        int output = lengthOfLongestSubstringTwoDistinct("ccaabbb");
+        //int output = lengthOfLongestSubstringTwoDistinct("1123123aaaaaa990606");
+
+        String output = longestPalindrome("1123123aaaaaa990606");
         System.out.println(output);
 
     }
@@ -675,6 +677,40 @@ public class Main {
         }
 
         return max;
+    }
+
+    public static String longestPalindrome(String s) {
+        if (s.length() <= 1) {
+            return s;
+        }
+        int maxLength = 1;
+        String maxStr = s.substring(0,1);
+        char[] sCharArray = s.toCharArray();
+
+        for(int i = 0; i < s.length(); i++) {
+            for(int j = i + maxLength; j <= s.length(); j++) {
+                if (j-i > maxLength && CheckPalindrone(s.substring(i, j))) {
+                    maxLength = j-i;
+                    maxStr = s.substring(i,j);
+                }
+            }
+        }
+
+        return maxStr;
+    }
+
+    public static boolean CheckPalindrone(String s) {
+        int left = 0;
+        int right = s.length() -1;
+        while (left < right) {
+            if (s.charAt(left) != s.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+
+        return true;
     }
 
     public class TreeNode {
