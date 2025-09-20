@@ -737,11 +737,36 @@ public class Main {
             return 0;
         }
 
+        if (root.left == null) {
+            return 1+ minDepth(root.right);
+        }
+        if (root.right == null) {
+            return 1+minDepth(root.left);
+        }
+
         int left = minDepth(root.left);
         int right = minDepth(root.right);
 
         return 1 + Math.min(left, right);
     }
+
+    int totalSum = 0;
+    public int sumNumbers(TreeNode root) {
+        preOrder(root, 0);
+        return totalSum;
+    }
+
+    public void preOrder(TreeNode root, int currNumber) {
+        if (root != null) {
+            currNumber = currNumber * 10 + root.val;
+            if (root.left == null && root.right == null) {
+                totalSum = totalSum + currNumber;
+            }
+            preOrder(root.left, currNumber);
+            preOrder(root.right, currNumber);
+        }
+    }
+
 
     public class TreeNode {
         int val;
