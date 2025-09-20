@@ -679,7 +679,7 @@ public class Main {
         return max;
     }
 
-    public static String longestPalindrome(String s) {
+    public static String longestPalindromeBruteForce(String s) {
         if (s.length() <= 1) {
             return s;
         }
@@ -711,6 +711,34 @@ public class Main {
         }
 
         return true;
+    }
+
+    public static String longestPalindrome(String s) {
+        if (s.length() <= 1) {
+            return s;
+        }
+
+        String maxStr = s.substring(0,1);
+        for(int i = 0; i < s.length()-1; i++) {
+            String odd = expandFromCentre(s,i,i);
+            String even = expandFromCentre(s,i,i+1);
+
+            if (odd.length() > maxStr.length()) {
+                maxStr = odd;
+            }
+            if (even.length() > maxStr.length()) {
+                maxStr = even;
+            }
+        }
+        return maxStr;
+    }
+
+    public static String expandFromCentre(String s, int left, int right) {
+        while(left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            left--;
+            right++;
+        }
+        return s.substring(left+1, right);
     }
 
     public boolean isBalanced(TreeNode root) {
@@ -767,6 +795,20 @@ public class Main {
         }
     }
 
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> curr =  new ArrayList<Integer>();
+        preOrder(root, curr);
+        return curr;
+    }
+
+    public void preOrder(TreeNode root, List<Integer> curr) {
+        if (root == null) {
+            return;
+        }
+        curr.add(root.val);
+        preOrder(root.left, curr);
+        preOrder(root.right, curr);
+    }
 
     public class TreeNode {
         int val;
