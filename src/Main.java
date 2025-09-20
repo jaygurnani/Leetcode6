@@ -713,6 +713,36 @@ public class Main {
         return true;
     }
 
+    public boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+
+        if (Math.abs(height(root.left) - height(root.right)) < 2 && isBalanced(root.left) && isBalanced(root.right)) {
+            return true;
+        }
+        return false;
+    }
+
+    public int height(TreeNode root) {
+        if (root == null) {
+            return -1;
+        }
+
+        return 1+ Math.max(height(root.left), height(root.right));
+    }
+
+    public int minDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        int left = minDepth(root.left);
+        int right = minDepth(root.right);
+
+        return 1 + Math.min(left, right);
+    }
+
     public class TreeNode {
         int val;
         TreeNode left;
