@@ -44,9 +44,11 @@ public class Main {
         //int output = longestOnes(nums, 3);
         //int output = lengthOfLongestSubstringTwoDistinct("1123123aaaaaa990606");
 
-        String output = longestPalindrome("1123123aaaaaa990606");
-        System.out.println(output);
+        //String output = longestPalindrome("1123123aaaaaa990606");
+        int[] input = new int[]{1, 2, 3, 4, 5};
+        rotateLeft(input, 2);
 
+        System.out.println(Arrays.toString(input));
     }
 
     public static List<List<String>> groupAnagrams(String[] strs) {
@@ -739,6 +741,56 @@ public class Main {
             right++;
         }
         return s.substring(left+1, right);
+    }
+
+    public static void rotateLeft(int[] arr, int d) {
+        int n = arr.length;
+        d = d % n; // handle d > n
+        int[] temp = new int[d];
+
+        // store first d elements
+        for (int i = 0; i < d; i++) {
+            temp[i] = arr[i];
+        }
+
+        // shift the rest left
+        for (int i = d; i < n; i++) {
+            arr[i - d] = arr[i];
+        }
+
+        // put temp at the end
+        for (int i = 0; i < d; i++) {
+            arr[n - d + i] = temp[i];
+        }
+    }
+
+    public int countNodes(TreeNode root) {
+        if (root != null) {
+            return 1+countNodes(root.left)+countNodes(root.right);
+        } else {
+            return 0;
+        }
+    }
+
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> output = new ArrayList<>();
+        if (root == null) {
+            return null;
+        }
+        binaryTreePathsList(root, Integer.toString(root.val), output);
+        return output;
+    }
+
+    public static void binaryTreePathsList(TreeNode root, String curr, List<String> output) {
+        if (root.left == null && root.right == null) {
+            output.add(curr);
+        }
+        if (root.left != null) {
+            binaryTreePathsList(root.left, curr+"->"+root.left.val, output);
+        }
+        if (root.right != null) {
+            binaryTreePathsList(root.right, curr+"->"+root.right.val, output);
+        }
     }
 
     public boolean isBalanced(TreeNode root) {
