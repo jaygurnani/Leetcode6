@@ -45,10 +45,15 @@ public class Main {
         //int output = lengthOfLongestSubstringTwoDistinct("1123123aaaaaa990606");
 
         //String output = longestPalindrome("1123123aaaaaa990606");
-        int[] input = new int[]{1, 2, 3, 4, 5};
-        rotateLeft(input, 2);
+//        int[] input = new int[]{1, 2, 3, 4, 5};
+//        rotateLeft(input, 2);
+        //int[] input = {1,-1,5,-2,3};
+        //int k = 3;
+        //int output = maxSubArrayLen(input, k);
 
-        System.out.println(Arrays.toString(input));
+        int[][] input = {{1,1,0,0,0},{1,1,0,0,0},{0,0,0,1,1},{0,0,0,1,1}};
+        int output = numDistinctIslands(input);
+        System.out.println(output);
     }
 
     public static List<List<String>> groupAnagrams(String[] strs) {
@@ -860,6 +865,102 @@ public class Main {
         curr.add(root.val);
         preOrder(root.left, curr);
         preOrder(root.right, curr);
+    }
+
+    public static int maxSubArrayLen(int[] nums, int k) {
+        int min = 0;
+        int prefix = 0;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for(int i = 0; i < nums.length; i++) {
+            prefix = prefix + nums[i];
+
+            if (prefix == k) {
+                min = i+1;
+            }
+
+            if (map.containsKey(prefix-k)) {
+                int j = map.get(prefix-k);
+                min = Math.max(min, i-j);
+            }
+
+            if (!map.containsKey(prefix)) {
+                map.put(prefix, i);
+            }
+        }
+
+        return min;
+    }
+
+    public static int numDistinctIslands(int[][] grid) {
+        int numDistinct = 0;
+        boolean[][] seen = new boolean[grid.length][grid[0].length];
+
+        for (int i = 0; i < grid.length; i++) {
+            for(int j = 0; j < grid[0].length; j++) {
+                if (seen[i][j] == true) {
+                    continue;
+                }
+
+                if (grid[i][j] == 1) {
+                    numDistinct++;
+
+                    dfs(grid, seen, i, j);
+                }
+
+            }
+        }
+        return numDistinct;
+    }
+
+    public static void dfs(int[][] grid, boolean[][]seen, int i, int j) {
+        Queue<Pair> queue = new ArrayDeque<>();
+        queue.offer(new Pair(i,j));
+        seen[i][j] = true;
+
+        int[][] directions = new int[][]{{0,1}, {0,-1}, {-1,0}, {1,0}};
+
+        while (!queue.isEmpty()) {
+            Pair currentPoint = queue.poll();
+            for(int[] direction: directions) {
+                int newX = currentPoint.x + direction[0];
+                int newY = currentPoint.y + direction[1];
+                if (newX >= grid.length || newX < 0 || newY >= grid[0].length || newY < 0) {
+                    continue;
+                }
+                if (grid[newX][newY] == 0) {
+                    continue;
+                }
+                if (seen[newX][newY] == false) {
+                    seen[newX][newY] = true;
+                    queue.offer(new Pair(newX, newY));
+                }
+            }
+        }
+
+    }
+
+    public static class Pair {
+        int x;
+        int y;
+        public Pair(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public int[] getModifiedArray(int length, int[][] updates) {
+        int[] result = new int[length];
+        for (int[] input: updates) {
+            int start = input[0];
+            int end = input[1];
+            int modify = input[2];
+
+            for(int i = start; i <= end; i++) {
+                result[i] = result[i] + modify;
+            }
+        }
+
+        return result;
     }
 
     public class TreeNode {
