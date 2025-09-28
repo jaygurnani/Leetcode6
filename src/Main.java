@@ -229,7 +229,7 @@ public class Main {
         return longest;
     }
 
-    public static int findKthLargest(int[] nums, int k) {
+    public static int findKthLargestPQ(int[] nums, int k) {
         PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
         int result = 0;
 
@@ -937,6 +937,127 @@ public class Main {
             }
         }
 
+    }
+
+    public int minBitFlips(int start, int goal) {
+        int count = 0;
+        while (start > 0 && goal > 0) {
+            if ((start & 1) != (goal & 1)) {
+                count++;
+            }
+            start >>= 1;
+            goal >>= 1;
+        }
+        return count;
+    }
+
+    public int reverse(int x) {
+        boolean needsNegative = false;
+        StringBuilder sb = new StringBuilder();
+        if (x < 0) {
+            needsNegative = true;
+        }
+
+        int toReverse = Math.abs(x);
+        String s = Integer.toString(toReverse);
+        for(int i = s.length()-1; i >= 0; i--) {
+            sb.append(s.charAt(i));
+        }
+        if (needsNegative) {
+            sb.insert(0,"-");
+        }
+        try {
+            return Integer.parseInt(sb.toString());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    public boolean isSymmetric(TreeNode root) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            TreeNode n1 = queue.poll();
+            TreeNode n2 = queue.poll();
+            if ((n1.left == null) && (n2.right == null)) {
+                return true;
+            }
+            if (n1.left != null && (n2.right == null)) {
+                return false;
+            }
+            if (n1.right != null && (n2.left == null)) {
+                return false;
+            }
+            if (n1.val == n2.val && isSymmetric(n1.left) && isSymmetric(n1.right)) {
+                return true;
+            }
+            queue.offer(n1.left);
+            queue.offer(n2.right);
+            queue.offer(n1.right);
+            queue.offer(n2.left);
+        }
+        return true;
+    }
+
+    public int climbStairs(int n) {
+        if (n == 1) {
+            return 1;
+        }
+        int[] dp = new int[n + 1];
+        dp[1] = 1;
+        dp[2] = 2;
+        for (int i = 3; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+        }
+        return dp[n];
+    }
+
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        TreeNode left = invertTree(root.left);
+        TreeNode right = invertTree(root.right);
+        root.left = right;
+        root.right = left;
+        return root;
+    }
+
+    public int findKthLargest(int[] nums, int k) {
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            list.add(nums[i]);
+        }
+        return quickSelect(list, k);
+    }
+
+    public int quickSelect(List<Integer> nums, int k) {
+        int pivotIndex = new Random().nextInt(nums.size());
+        int pivot = nums.get(pivotIndex);
+
+        List<Integer> left = new ArrayList<>();
+        List<Integer> mid = new ArrayList<>();
+        List<Integer> right = new ArrayList<>();
+
+        for(int num: nums) {
+            if (num > pivot) {
+                left.add(num);
+            } else if (num < pivot) {
+                right.add(num);
+            } else {
+                mid.add(num);
+            }
+        }
+
+        // go left if the number is there
+        if (k <= left.size()) {
+            return quickSelect(left, k);
+        }
+        if (left.size() + mid.size() < k) {
+            return quickSelect(right, k- left.size() - mid.size());
+        }
+        return pivot;
     }
 
     public static class Pair {
